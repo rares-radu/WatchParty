@@ -1,0 +1,12 @@
+{
+  "require": {
+    "laravel/framework": "v13.31.0",
+    "laravel/reverb": "v1.11.1",
+    "php-tmdb/api": "v4.1.5"
+  },
+  "config": {
+    "allow-plugins": {
+      "php-http/discovery": true
+    }
+  }
+}
