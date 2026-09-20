@@ -9,17 +9,17 @@
 
 "use strict";
 
-const NODE_SPEED  = 64;
+const NODE_SPEED  = 24;
 const NODE_RADIUS = 2.5;
 
 let g_elCanvas            = null;
 let g_Ctx                 = null;
-let g_aptNodes            = [];
+let g_aNodes              = [];
 let g_nAnimationRequestId = 0;
 let g_nLastTime           = 0;
 let g_bCursorVisible      = false;
 
-const g_ptCursor   = { x: 0, y: 0, radius: NODE_RADIUS };
+const g_CursorNode = { x: 0, y: 0, vx: 0, vy: 0 };
 
 /*F+F+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   Function: OnWindowResize
@@ -37,16 +37,15 @@ function OnWindowResize()
     g_elCanvas.height = Math.round( window.innerHeight * window.devicePixelRatio );
     g_Ctx.setTransform( window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0 );
 
-    g_aptNodes = Array.from(
+    g_aNodes = Array.from(
         { length: Math.round( window.innerWidth * window.innerHeight / 11000 ) },
         function ()
         {
             return {
-                x:      Math.random() * window.innerWidth,
-                y:      Math.random() * window.innerHeight,
-                vx:     ( Math.random() - 0.5 ) * NODE_SPEED,
-                vy:     ( Math.random() - 0.5 ) * NODE_SPEED,
-                radius: NODE_RADIUS,
+                x:  Math.random() * window.innerWidth,
+                y:  Math.random() * window.innerHeight,
+                vx: ( Math.random() < 0.5 ) ? NODE_SPEED : -NODE_SPEED,
+                vy: ( Math.random() < 0.5 ) ? NODE_SPEED : -NODE_SPEED
             };
         } );
     DrawNodes( 0 );
@@ -69,8 +68,9 @@ function DrawNodes( nDelta )
 {
     g_Ctx.clearRect( 0, 0, window.innerWidth, window.innerHeight );
 
-    const nReach = Math.min( 185, window.innerWidth * 0.35 );
-    for ( const pt of g_aptNodes )
+    const nMaxDist = Math.min( 185, window.innerWidth * 0.35 );
+
+    for ( const pt of g_aNodes )
     {
         pt.x += pt.vx * nDelta;
         pt.y += pt.vy * nDelta;
@@ -90,7 +90,8 @@ function DrawNodes( nDelta )
     }
 
     // Add our cursor to the array of nodes
-    const apt = g_bCursorVisible ? g_aptNodes.concat( g_ptCursor ) : g_aptNodes;
+    const apt = g_bCursorVisible ? g_aNodes.concat( g_CursorNode ) : g_aNodes;
+
     for ( let i = 0; i < apt.length; i++ )
     {
         const pt1 = apt[ i ];
@@ -98,7 +99,7 @@ function DrawNodes( nDelta )
         // Draw the nodes
         g_Ctx.fillStyle = "rgba( 255, 255, 255, 0.58 )";
         g_Ctx.beginPath();
-        g_Ctx.arc( pt1.x, pt1.y, pt1.radius, 0, Math.PI * 2 );
+        g_Ctx.arc( pt1.x, pt1.y, NODE_RADIUS, 0, Math.PI * 2 );
         g_Ctx.fill();
 
         // Draw lines between nodes that are in reach of each other
@@ -106,13 +107,13 @@ function DrawNodes( nDelta )
         {
             const pt2   = apt[ j ];
             const nDist = Math.hypot( pt1.x - pt2.x, pt1.y - pt2.y );
-            if ( nDist > nReach )
+            if ( nDist >= nMaxDist )
             {
                 continue;
             }
 
             // Slowly fade out the line as the distance increases
-            g_Ctx.strokeStyle = `rgba( 255, 255, 255, ${ ( 1 - nDist / nReach ) * 0.24 } )`;
+            g_Ctx.strokeStyle = `rgba( 255, 255, 255, ${ ( 1 - nDist / nMaxDist ) * 0.24 } )`;
             g_Ctx.lineWidth   = 0.75;
             g_Ctx.beginPath();
             g_Ctx.moveTo( pt1.x, pt1.y );
@@ -153,8 +154,8 @@ function AnimateNodes( nTime )
 -----------------------------------------------------------------F-F*/
 function OnPointerMove( event )
 {
-    g_ptCursor.x     = event.clientX;
-    g_ptCursor.y     = event.clientY;
+    g_CursorNode.x   = event.clientX;
+    g_CursorNode.y   = event.clientY;
     g_bCursorVisible = true;
 
     DrawNodes( 0 );
