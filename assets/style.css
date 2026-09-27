@@ -28,6 +28,8 @@ body
 
 header
 {
+    display:  flex;
+    gap:      12px;
     position: absolute;
     z-index:  2;
     top:      0;
@@ -37,15 +39,20 @@ header
 
 .login
 {
-    min-height:    44px;
-    padding:       11px 29px;
-    border:        1px solid #666666;
-    border-radius: 6px;
-    background:    #101010d9;
-    color:         #eeeeee;
-    font:          inherit;
-    font-size:     1rem;
-    transition:    background .2s, border-color .2s;
+    display:         inline-flex;
+    align-items:     center;
+    justify-content: center;
+    text-decoration: none;
+    cursor:          pointer;
+    min-height:      44px;
+    padding:         11px 29px;
+    border:          1px solid #666666;
+    border-radius:   6px;
+    background:      #101010d9;
+    color:           #eeeeee;
+    font:            inherit;
+    font-size:       1rem;
+    transition:      background .2s, border-color .2s;
 }
 
 .login:hover
@@ -72,6 +79,8 @@ main
 
 .watch-card
 {
+    overflow-wrap:   anywhere;
+    padding:         24px;
     width:           min( 440px, 76vw );
     aspect-ratio:    1;
     display:         flex;
@@ -100,4 +109,98 @@ h1
     font-weight:    400;
     line-height:    1.5;
     letter-spacing: -0.025em;
+}
+
+.auth-card
+{
+    width:        min( 460px, 100% );
+    aspect-ratio: auto;
+    padding:      clamp( 24px, 5vw, 40px );
+    gap:          20px;
+}
+
+.muted
+{
+    color:       #b5b5b5;
+    font-size:   .875rem;
+    line-height: 1.6;
+    margin:      0;
+}
+
+.muted a
+{
+    color:                 #ffffff;
+    text-underline-offset: 3px;
+}
+
+.auth-form
+{
+    display:    grid;
+    width:      100%;
+    gap:        10px;
+    text-align: left;
+}
+
+.auth-form label
+{
+    font-size:  .875rem;
+    margin-top: 6px;
+}
+
+.auth-form input
+{
+    min-width:     0;
+    width:         100%;
+    min-height:    44px;
+    padding:       12px;
+    border:        1px solid #666666;
+    border-radius: 6px;
+    background:    #101010;
+    color:         #ffffff;
+    font:          inherit;
+}
+
+.auth-form input:focus-visible
+{
+    outline:        2px solid white;
+    outline-offset: 2px;
+}
+
+.auth-form .primary
+{
+    margin-top: 14px;
+    background: #eeeeee;
+    color:      #111111;
+}
+
+.auth-form .primary:hover
+{
+    background: #cccccc;
+}
+
+.form-error
+{
+    margin:        0;
+    width:         100%;
+    padding:       12px;
+    border:        1px solid #bc6565;
+    border-radius: 6px;
+    color:         #ffbebe;
+    font-size:     .875rem;
+    line-height:   1.6;
+    text-align:    left;
+}
+
+@media ( max-width: 360px )
+{
+    header
+    {
+        padding: 20px;
+        gap:     8px;
+    }
+
+    .login
+    {
+        padding-inline: 18px;
+    }
 }

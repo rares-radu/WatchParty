@@ -88,3 +88,13 @@ http-client.private.env.json
 
 # PHPStorm composer packages
 vendor/
+
+# Local credentials and runtime files
+config.local.php
+.runtime/
+
+# Unit tests
+tests/
+
+# Environment file
+.env

@@ -2,7 +2,9 @@
   "require": {
     "laravel/framework": "v13.31.0",
     "laravel/reverb": "v1.11.1",
-    "php-tmdb/api": "v4.1.5"
+    "php-tmdb/api": "v4.1.5",
+    "vlucas/phpdotenv": "v5.7.0",
+    "ext-pdo": "*"
   },
   "config": {
     "allow-plugins": {
