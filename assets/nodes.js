@@ -38,16 +38,17 @@ function OnWindowResize()
     g_Ctx.setTransform( window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0 );
 
     g_aNodes = Array.from(
-        { length: Math.round( window.innerWidth * window.innerHeight / 11000 ) },
-        function ()
-        {
-            return {
-                x:  Math.random() * window.innerWidth,
-                y:  Math.random() * window.innerHeight,
-                vx: ( Math.random() < 0.5 ) ? NODE_SPEED : -NODE_SPEED,
-                vy: ( Math.random() < 0.5 ) ? NODE_SPEED : -NODE_SPEED
-            };
-        } );
+                          { length: Math.round( window.innerWidth * window.innerHeight / 11000 ) },
+                          function ()
+                          {
+                              return {
+                                  x:  Math.random() * window.innerWidth,
+                                  y:  Math.random() * window.innerHeight,
+                                  vx: ( Math.random() < 0.5 ) ? NODE_SPEED : -NODE_SPEED,
+                                  vy: ( Math.random() < 0.5 ) ? NODE_SPEED : -NODE_SPEED
+                              };
+                          }
+                         );
     DrawNodes( 0 );
 }
 

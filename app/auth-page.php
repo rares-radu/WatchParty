@@ -114,7 +114,7 @@ if ( $_SERVER[ "REQUEST_METHOD" ] === "POST" )
                    autocomplete="<?= $register ? "new-password" : "current-password" ?>" <?= $register ? "minlength=\"12\" aria-describedby=\"password-help\"" : "" ?>
                    required>
             <?php if ( $register ): ?>
-                <small id="password-help" class="muted">Use 12&ndash;72 bytes. An ASCII character is one byte; some symbols use more.</small>
+                <small id="password-help" class="muted">Use 12&ndash;72 characters.</small>
                 <label for="password_confirmation">Confirm password</label>
                 <input id="password_confirmation" type="password" name="password_confirmation" autocomplete="new-password" required>
             <?php endif; ?>

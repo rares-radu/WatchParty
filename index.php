@@ -14,6 +14,7 @@ $user = current_user();
 
     <link rel="stylesheet" href="assets/style.css">
     <script src="assets/nodes.js" defer></script>
+    <?php if ( $user ): ?><script src="assets/movie-search.js" defer></script><?php endif; ?>
 </head>
 <body>
 <canvas id="nodes" aria-hidden="true"></canvas>
@@ -32,7 +33,18 @@ $user = current_user();
     <section class="watch-card" aria-label="Watch Party">
         <img src="assets/play.svg" width="88" height="88" alt="">
         <h1><?= $user ? "Welcome, " . htmlspecialchars( $user[ "name" ], ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8" ) . "!" : "Log in to start<br>watching" ?></h1>
-        <?php if ( $user ): ?><p class="muted">You're logged in to Watch Party.</p><?php endif; ?>
+        <?php if ( $user ): ?>
+            <div class="movie-search" id="movie-search">
+                <label for="movie-query">Find a movie to watch</label>
+                <input id="movie-query" type="search" placeholder="Search movies by name..." autocomplete="off" maxlength="200"
+                       aria-controls="movie-search-dropdown" aria-expanded="false" aria-describedby="movie-search-status">
+                <div class="movie-search-dropdown" id="movie-search-dropdown" hidden>
+                    <p class="movie-search-status" id="movie-search-status" role="status" aria-live="polite"></p>
+                    <ul class="movie-search-results" id="movie-search-results" aria-label="Movie results"></ul>
+                    <p class="movie-search-credit">Movie data and images from <a href="https://www.themoviedb.org/" target="_blank" rel="noopener noreferrer">TMDB</a>.</p>
+                </div>
+            </div>
+        <?php endif; ?>
     </section>
 </main>
 </body>

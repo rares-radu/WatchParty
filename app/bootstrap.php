@@ -16,8 +16,12 @@ set_exception_handler(
 
 $dotenv = Dotenv::createImmutable( __DIR__ . "/.." );
 $dotenv->load();
-$dotenv->required( [ "WATCHPARTY_HOST", "WATCHPARTY_PORT", "WATCHPARTY_DATABASE",
-                     "WATCHPARTY_DATABASE_USERNAME", "WATCHPARTY_DATABASE_PASSWORD" ] )->notEmpty();
+$dotenv->required(
+                  [
+                      "WATCHPARTY_HOST",              "WATCHPARTY_PORT",              "WATCHPARTY_DATABASE",
+                      "WATCHPARTY_DATABASE_USERNAME", "WATCHPARTY_DATABASE_PASSWORD", "TMDB_API_KEY"
+                  ]
+                 )->notEmpty();
 $dotenv->required( "WATCHPARTY_PORT" )->isInteger();
 
 header( "Cache-Control: no-store" );

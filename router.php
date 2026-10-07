@@ -7,11 +7,12 @@ if ( preg_match( "~^/assets/[a-zA-Z0-9_-]+\.(css|js|svg)$~D", $path ) && is_file
 }
 
 $routes = [
-    "/"             => "index.php",
-    "/index.php"    => "index.php",
-    "/login.php"    => "login.php",
-    "/register.php" => "register.php",
-    "/logout.php"   => "logout.php"
+    "/"                 => "index.php",
+    "/index.php"        => "index.php",
+    "/login.php"        => "login.php",
+    "/register.php"     => "register.php",
+    "/logout.php"       => "logout.php",
+    "/movie-search.php" => "movie-search.php"
 ];
 if ( !isset( $routes[ $path ] ) )
 {
