@@ -73,22 +73,20 @@ function db(): PDO
 }
 
 /*F+F+++F+++F+++F+++F+++F+++F+++F+++F+++F+++F+++F+++F+++F+++F+++F+++F
-  Function: get_form_input
+  Function: get_query_parameter
 
-  Summary:  This function retrieves the string submitted in a form
-            on the current page.
+  Summary:  This function retrieves a query parameter from the
+            current URL.
 
-  Args:     string $name
-              The value of the `name` attribute of the `<input>`
-              element.
+  Args:     string $parameter
+              The name of the URL query parameter.
 
   Returns:  string
-              The string contained by the `<input>` element when
-              the form was submitted.
+              The value contained by the query parameter.
 F---F---F---F---F---F---F---F---F---F---F---F---F---F---F---F---F-F*/
-function get_form_input( string $name ): string
+function get_query_parameter( string $parameter ): string
 {
-    return is_string( $_POST[ $name ] ?? null ) ? $_POST[ $name ] : "";
+    return is_string( $_POST[ $parameter ] ?? null ) ? $_POST[ $parameter ] : "";
 }
 
 /*F+F+++F+++F+++F+++F+++F+++F+++F+++F+++F+++F+++F+++F+++F+++F+++F+++F
@@ -118,7 +116,7 @@ function redirect_home(): never
 F---F---F---F---F---F---F---F---F---F---F---F---F---F---F---F---F-F*/
 function prevent_cross_site_request(): void
 {
-    if ( !hash_equals( $_SESSION[ "csrf" ], get_form_input( "csrf" ) ) )
+    if ( !hash_equals( $_SESSION[ "csrf" ], get_query_parameter( "csrf" ) ) )
     {
         http_response_code( 403 );
         exit( "Your form expired. Go back, refresh the page, and try again." );

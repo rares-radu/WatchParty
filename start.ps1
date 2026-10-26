@@ -5,7 +5,7 @@ param(
 $ErrorActionPreference = "Stop"
 
 $PhpCommand = Get-Command php -ErrorAction SilentlyContinue
-$PhpPath = ""
+$PhpPath    = ""
 if ( $PhpCommand )
 {
     $PhpPath = $PhpCommand.Source

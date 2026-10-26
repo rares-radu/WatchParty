@@ -135,12 +135,37 @@ async function FetchMovies( sQuery, nRequestVersion )
             throw new Error( Data.error || "Movie search is unavailable. Please try again." );
         }
 
+        // Clear the results
         g_elResults.replaceChildren();
 
+        // Display all the movies we got from TMDB based on the query
         for ( const Movie of Data.results )
         {
-            const elRow     = document.createElement( "li" );
-            elRow.className = "movie-search-result";
+            const elRow  = document.createElement( "li" );
+            const elForm = document.createElement( "form" );
+
+            elForm.method = "post";
+            elForm.action = "create-room.php";
+
+            for ( const [ name, value ] of Object.entries(
+                {
+                    csrf:        g_elSearch.dataset.csrf,
+                    tmdb_id:     Movie.id,
+                    movie_title: Movie.title
+                } ) )
+            {
+                const elField = document.createElement( "input" );
+                elField.type  = "hidden";
+                elField.name  = name;
+                elField.value = value;
+                elForm.append( elField );
+            }
+
+            const elButton = document.createElement( "button" );
+            elButton.type      = "submit";
+            elButton.className = "movie-search-result";
+            elButton.setAttribute( "aria-label", `Create a room for ${ Movie.title }` );
+            elForm.addEventListener( "submit", function () { elButton.disabled = true; } );
 
             if ( Movie.poster_url )
             {
@@ -159,16 +184,18 @@ async function FetchMovies( sQuery, nRequestVersion )
                                           },
                                           { once: true }
                                          );
-                elRow.append( elPoster );
+                elButton.append( elPoster );
             }
             else
             {
-                elRow.append( GetPosterFallback() );
+                elButton.append( GetPosterFallback() );
             }
 
-            const elTitle       = document.createElement( "span" );
+            const elTitle = document.createElement( "span" );
             elTitle.textContent = Movie.title;
-            elRow.append( elTitle );
+            elButton.append( elTitle );
+            elForm.append( elButton );
+            elRow.append( elForm );
             g_elResults.append( elRow );
         }
         g_elStatus.textContent = Data.results.length ? `${ Data.results.length } movies found.` : "No movies found. Try another name.";

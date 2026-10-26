@@ -34,7 +34,7 @@ $user = current_user();
         <img src="assets/play.svg" width="88" height="88" alt="">
         <h1><?= $user ? "Welcome, " . htmlspecialchars( $user[ "name" ], ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8" ) . "!" : "Log in to start<br>watching" ?></h1>
         <?php if ( $user ): ?>
-            <div class="movie-search" id="movie-search">
+            <div class="movie-search" id="movie-search" data-csrf="<?= htmlspecialchars( $_SESSION[ "csrf" ], ENT_QUOTES, "UTF-8" ) ?>">
                 <label for="movie-query">Find a movie to watch</label>
                 <input id="movie-query" type="search" placeholder="Search movies by name..." autocomplete="off" maxlength="200"
                        aria-controls="movie-search-dropdown" aria-expanded="false" aria-describedby="movie-search-status">
@@ -45,6 +45,14 @@ $user = current_user();
                 </div>
             </div>
         <?php endif; ?>
+        <form class="auth-form" action="room.php" method="get">
+            <label for="invite-code">Have an invite code?</label>
+            <input id="invite-code" name="code" placeholder="Enter your room code" required
+                   maxlength="24" pattern="[A-Fa-f0-9]{24}" autocomplete="off" spellcheck="false"
+                   aria-describedby="invite-help">
+            <p class="muted" id="invite-help">Join a watch party &ndash; no account needed.</p>
+            <button class="login" type="submit">Join room</button>
+        </form>
     </section>
 </main>
 </body>

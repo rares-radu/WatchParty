@@ -17,9 +17,9 @@ if ( $_SERVER[ "REQUEST_METHOD" ] === "POST" )
 {
     prevent_cross_site_request();
 
-    $email    = strtolower( trim( get_form_input( "email" ) ) );
-    $name     = trim( get_form_input( "name" ) );
-    $password = get_form_input( "password" );
+    $email    = strtolower( trim( get_query_parameter( "email" ) ) );
+    $name     = trim( get_query_parameter( "name" ) );
+    $password = get_query_parameter( "password" );
 
     if ( !allow_authentication_attempt() )
     {
@@ -39,7 +39,7 @@ if ( $_SERVER[ "REQUEST_METHOD" ] === "POST" )
     {
         $error = "Use a password between 12 and 72 bytes without null characters.";
     }
-    else if ( $register && $password !== get_form_input( "password_confirmation" ) )
+    else if ( $register && $password !== get_query_parameter( "password_confirmation" ) )
     {
         $error = "The passwords do not match.";
     }

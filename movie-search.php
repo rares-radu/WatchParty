@@ -24,7 +24,7 @@ header( "Content-Type: application/json; charset=UTF-8" );
   Summary:  This function sends the client the response from the
             movie search request.
 
-  Args:     int $status
+  Args:     int $response_code
               HTML response code.
             array $data
               Data to send to the client.
@@ -32,9 +32,9 @@ header( "Content-Type: application/json; charset=UTF-8" );
   Returns:  never
               This function never returns.
 -----------------------------------------------------------------F-F*/
-function movie_search_response( int $status, array $data ): never
+function movie_search_response( int $response_code, array $data ): never
 {
-    http_response_code( $status );
+    http_response_code( $response_code );
     echo json_encode( $data, JSON_THROW_ON_ERROR | JSON_INVALID_UTF8_SUBSTITUTE );
     exit();
 }

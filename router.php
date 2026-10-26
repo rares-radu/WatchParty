@@ -12,7 +12,10 @@ $routes = [
     "/login.php"        => "login.php",
     "/register.php"     => "register.php",
     "/logout.php"       => "logout.php",
-    "/movie-search.php" => "movie-search.php"
+    "/movie-search.php" => "movie-search.php",
+    "/create-room.php"  => "create-room.php",
+    "/room.php"         => "room.php",
+    "/playback.php"     => "playback.php"
 ];
 if ( !isset( $routes[ $path ] ) )
 {

@@ -184,6 +184,13 @@ h1
 
 .movie-search-result
 {
+    width:       100%;
+    background:  transparent;
+    color:       inherit;
+    font-family: inherit;
+    text-align:  left;
+    cursor:      pointer;
+    border:      0;
     display:     flex;
     align-items: center;
     gap:         12px;
@@ -191,6 +198,48 @@ h1
     border-top:  1px solid #ffffff14;
     font-size:   .875rem;
     line-height: 1.5;
+}
+
+.movie-search-result:hover, .movie-search-result:focus-visible
+{
+    background:     #292929;
+    outline:        2px solid #eeeeee;
+    outline-offset: -2px;
+}
+
+.movie-search-result:disabled
+{
+    opacity: 0.6;
+    cursor:  wait;
+}
+
+.room-card
+{
+    width:        min( 1200px, 100% );
+    aspect-ratio: auto;
+    gap:          20px;
+}
+
+.room-invite
+{
+    max-width: 440px;
+}
+
+.movie-player
+{
+    width:         100%;
+    aspect-ratio:  16 / 9;
+    border:        0;
+    background:    #000000;
+    border-radius: 8px;
+}
+
+.playback-controls
+{
+    display:         flex;
+    flex-wrap:       wrap;
+    justify-content: center;
+    gap:             12px;
 }
 
 .movie-poster, .movie-poster-fallback
