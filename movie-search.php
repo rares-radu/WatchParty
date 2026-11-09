@@ -2,7 +2,9 @@
 declare( strict_types=1 );
 
 use GuzzleHttp\Client as HttpClient;
-use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Exception\ResponseException;
+use GuzzleHttp\Handler\StreamHandler;
+use GuzzleHttp\HandlerStack;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Tmdb\Client;
 use Tmdb\Event\BeforeRequestEvent;
@@ -73,9 +75,10 @@ try
       trust store while retaining HTTPS certificate and hostname
       verification.
     --------------------------------------------------------------------*/
-    if ( PHP_OS_FAMILY === "Windows" && extension_loaded( "curl" ) && defined( "CURLSSLOPT_NATIVE_CA" ) )
+    if ( PHP_OS_FAMILY === "Windows"            && !ini_get( "curl.cainfo" ) &&
+         extension_loaded( "openssl" ) && ini_get( "allow_url_fopen" ) )
     {
-        $http_options[ "curl" ] = [ CURLOPT_SSL_OPTIONS => CURLSSLOPT_NATIVE_CA ];
+        $http_options[ "handler" ] = HandlerStack::create( new StreamHandler() );
     }
 
     $dispatcher = new EventDispatcher();
@@ -112,15 +115,10 @@ catch ( Throwable $exception )
 {
     // Avoid logging exception URLs, which can contain the API key
     $details = "Movie search failed: " . get_class( $exception );
-    if ( $exception instanceof RequestException )
+    if ( $exception instanceof ResponseException )
     {
-        $context  = $exception->getHandlerContext();
-        $details .= sprintf(
-                            " (cURL error %d, TLS verification result %d, HTTP status %d)",
-                            $context[ "errno" ] ?? 0,
-                            $context[ "ssl_verify_result" ] ?? 0,
-                            $exception->getResponse()?->getStatusCode() ?? 0
-                           );
+        $response = $exception->getResponse();
+        $details .= sprintf( " (HTTP %d %s)", $response->getStatusCode(), $response->getReasonPhrase() );
     }
     error_log( $details );
     movie_search_response( 503, [ "error" => "Movie search is temporarily unavailable. Please try again." ] );

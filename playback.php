@@ -34,7 +34,7 @@ try
     }
 
     $code = is_string( $_GET[ "code" ] ?? null ) ? strtoupper( trim( $_GET[ "code" ] ) ) : "";
-    if ( !preg_match( '/^[A-F0-9]{24}$/D', $code ) )
+    if ( !preg_match( "/^[A-F0-9]{24}$/D", $code ) )
     {
         playback_response( 404, [ "error" => "Room not found." ] );
     }

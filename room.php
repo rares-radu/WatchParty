@@ -12,7 +12,7 @@ if ( $_SERVER[ "REQUEST_METHOD" ] !== "GET" )
 
 $code = is_string( $_GET[ "code" ] ?? null ) ? strtoupper( trim( $_GET[ "code" ] ) ) : "";
 $room = false;
-if ( preg_match( '/^[A-F0-9]{24}$/D', $code ) )
+if ( preg_match( "/^[A-F0-9]{24}$/D", $code ) )
 {
     $query = db()->prepare( "SELECT rooms.*, users.name AS owner_name FROM rooms JOIN users ON users.id = rooms.owner_id WHERE invite_code = ?" );
     $query->execute( [ $code ] );
@@ -35,7 +35,10 @@ session_write_close();
     <meta name="robots" content="noindex, nofollow">
     <title><?= $room ? htmlspecialchars( $room[ "movie_title" ], ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8" ) : "Room not found" ?> | 🎉Watch Party🎉</title>
     <link rel="stylesheet" href="assets/style.css">
-    <?php if ( $room ): ?><script src="assets/room-sync.js" defer></script><?php endif; ?>
+    <?php if ( $room ): ?>
+        <script src="assets/room-sync.js" defer></script>
+        <script src="assets/room-chat.js" defer></script>
+    <?php endif; ?>
 </head>
 <body>
 <header><a class="login" href="index.php">Home</a></header>
@@ -49,13 +52,28 @@ session_write_close();
                 <input id="room-code" readonly value="<?= htmlspecialchars( $code, ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8" ) ?>">
                 <p class="muted">Friends can enter this code on the home page without signing up.</p>
             </div>
-            <iframe id="room-player" class="movie-player" src="https://framextv.xyz/embed/<?= ( int )$room[ "tmdb_id" ] ?>"
+            <div class="room-view">
+                <iframe id="room-player" class="movie-player" src="https://framextv.xyz/embed/<?= ( int )$room[ "tmdb_id" ] ?>"
                     data-code="<?= htmlspecialchars( $code, ENT_QUOTES, "UTF-8" ) ?>"
                     data-owner="<?= $is_owner ? "1" : "0" ?>"
                     data-csrf="<?= $is_owner ? htmlspecialchars( $_SESSION[ "csrf" ], ENT_QUOTES, "UTF-8" ) : "" ?>"
                     title="<?= htmlspecialchars( $room[ "movie_title" ], ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8" ) ?> player"
                     allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
                     allowfullscreen referrerpolicy="no-referrer"></iframe>
+                <aside class="room-chat" aria-labelledby="chat-heading">
+                    <h2 id="chat-heading">Room chat</h2>
+                    <div id="chat-messages" role="log" aria-label="Chat messages" tabindex="0"></div>
+                    <p id="chat-status" class="muted" role="status"></p>
+                    <?php if ( isset( $_SESSION[ "user_id" ] ) ): ?>
+                        <form id="chat-form" class="auth-form" method="post" action="chat.php?code=<?= $code ?>">
+                            <input type="hidden" name="csrf" value="<?= htmlspecialchars( $_SESSION[ "csrf" ], ENT_QUOTES, "UTF-8" ) ?>">
+                            <input name="message" aria-label="Chat message" placeholder="Write a message" maxlength="1000" required>
+                            <button class="login" type="submit">Send</button>
+                        </form>
+                    <?php endif; ?>
+                    <p id="chat-login" class="muted" <?= isset( $_SESSION[ "user_id" ] ) ? "hidden" : "" ?>><a href="login.php">Log in</a> to send messages</p>
+                </aside>
+            </div>
             <?php if ( !$is_owner ): ?>
                 <div class="playback-controls">
                     <button class="login" type="button" id="room-resync">Resync playback</button>

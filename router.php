@@ -15,6 +15,7 @@ $routes = [
     "/movie-search.php" => "movie-search.php",
     "/create-room.php"  => "create-room.php",
     "/room.php"         => "room.php",
+    "/chat.php"         => "chat.php",
     "/playback.php"     => "playback.php"
 ];
 if ( !isset( $routes[ $path ] ) )

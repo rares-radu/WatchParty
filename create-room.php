@@ -20,7 +20,7 @@ prevent_cross_site_request();
 
 $tmdb_id = get_query_parameter( "tmdb_id" );
 $title   = trim( get_query_parameter( "movie_title" ) );
-if ( !preg_match( '/^[1-9][0-9]{0,9}$/D', $tmdb_id ) ||
+if ( !preg_match( "/^[1-9][0-9]{0,9}$/D", $tmdb_id ) ||
      $title === ""                                   ||
      !mb_check_encoding( $title, "UTF-8" )           ||
      mb_strlen( $title ) > 255 )

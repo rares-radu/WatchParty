@@ -21,6 +21,17 @@ CREATE TABLE IF NOT EXISTS rooms
     FOREIGN KEY ( owner_id ) REFERENCES users ( id ) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
+CREATE TABLE IF NOT EXISTS room_messages
+(
+    id      BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    room_id BIGINT UNSIGNED NOT NULL,
+    user_id BIGINT UNSIGNED NOT NULL,
+    message VARCHAR( 1000 ) NOT NULL,
+    INDEX ( room_id, id ),
+    FOREIGN KEY ( room_id ) REFERENCES rooms ( id ) ON DELETE CASCADE,
+    FOREIGN KEY ( user_id ) REFERENCES users ( id ) ON DELETE CASCADE
+) ENGINE = InnoDB;
+
 CREATE TABLE IF NOT EXISTS room_playback
 (
     room_id    BIGINT UNSIGNED PRIMARY KEY,
