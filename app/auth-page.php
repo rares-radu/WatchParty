@@ -33,7 +33,7 @@ if ( $_SERVER[ "REQUEST_METHOD" ] === "POST" )
     }
     else if ( $register && ( $name === "" || strlen( $name ) > 100 ) )
     {
-        $error = "Enter a name of up to 100 bytes.";
+        $error = "Enter a name of up to 100 characters.";
     }
     else if ( str_contains( $password, "\0" ) || strlen( $password ) > 72 || ( $register && strlen( $password ) < 12 ) )
     {

@@ -2,6 +2,26 @@
 require __DIR__ . "/app/bootstrap.php";
 
 $user = current_user();
+
+$notice = $_SESSION[ "settings_notice" ] ?? "";
+unset( $_SESSION[ "settings_notice" ] );
+$error = "";
+if ( $_SERVER[ "REQUEST_METHOD" ] === "POST" )
+{
+    if ( !$user )
+    {
+        redirect_home();
+    }
+
+    prevent_cross_site_request();
+
+    require __DIR__ . "/app/account-settings.php";
+    $error = update_account_settings( ( int )$user[ "id" ] );
+    if ( $error === "" )
+    {
+        redirect_home();
+    }
+}
 ?>
 <!doctype html>
 <html lang="en-US">
@@ -14,21 +34,63 @@ $user = current_user();
 
     <link rel="stylesheet" href="assets/style.css">
     <script src="assets/nodes.js" defer></script>
-    <?php if ( $user ): ?><script src="assets/movie-search.js" defer></script><?php endif; ?>
+    <?php if ( $user ): ?>
+        <script src="assets/movie-search.js" defer></script>
+        <script src="assets/account-settings.js" defer></script>
+    <?php endif; ?>
 </head>
 <body>
 <canvas id="nodes" aria-hidden="true"></canvas>
 <header>
     <?php if ( $user ): ?>
-        <form action="logout.php" method="post">
-            <input type="hidden" name="csrf" value="<?= htmlspecialchars( $_SESSION[ "csrf" ], ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8" ) ?>">
-            <button class="login" type="submit">Log out</button>
-        </form>
+        <?php $csrf = htmlspecialchars( $_SESSION[ "csrf" ], ENT_QUOTES, "UTF-8" ); ?>
+        <button class="login account-toggle" id="account-toggle" popovertarget="account-menu" aria-label="Account menu">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+                <circle cx="12" cy="8" r="3.5"/>
+                <path d="M4.5 21v-2a7.5 7.5 0 0 1 15 0v2z"/>
+            </svg>
+        </button>
+        <div id="account-menu" popover>
+            <button id="open-settings" aria-haspopup="dialog">Settings</button>
+            <form action="logout.php" method="post">
+                <input type="hidden" name="csrf" value="<?= $csrf ?>">
+                <button type="submit">Log out</button>
+            </form>
+        </div>
     <?php else: ?>
         <a class="login" href="login.php">Log in</a>
         <a class="login" href="register.php">Register</a>
     <?php endif; ?>
 </header>
+<?php if ( $user ): ?>
+    <dialog id="account-settings" aria-labelledby="settings-title" <?= ( $error || $notice ) ? "data-reopen" : "" ?>>
+        <div class="settings-heading">
+            <h2 id="settings-title">Settings</h2>
+            <form method="dialog"><button class="login" aria-label="Close settings">&times;</button></form>
+        </div>
+        <?php if ( $error ): ?><p role="alert" class="form-error"><?= htmlspecialchars( $error ) ?></p><?php endif; ?>
+        <?php if ( $notice ): ?><p role="status"><?= htmlspecialchars( $notice ) ?></p><?php endif; ?>
+        <form method="post" class="auth-form">
+            <input type="hidden" name="csrf" value="<?= $csrf ?>">
+            <input type="hidden" name="action" value="username">
+            <label for="settings-name">Username</label>
+            <input id="settings-name" name="name" autocomplete="nickname" maxlength="100" value="<?= htmlspecialchars( $user[ "name" ], ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8" ) ?>" required>
+            <button class="login">Save username</button>
+        </form>
+        <form method="post" class="auth-form">
+            <input type="hidden" name="csrf" value="<?= $csrf ?>">
+            <input type="hidden" name="action" value="password">
+            <label for="old-password">Current password</label>
+            <input id="old-password" name="old_password" type="password" autocomplete="current-password" required>
+            <label for="new-password">New password</label>
+            <input id="new-password" name="password" type="password" autocomplete="new-password" aria-describedby="password-help" required>
+            <small id="password-help" class="muted">Use 12&ndash;72 characters.</small>
+            <label for="confirm-password">Confirm new password</label>
+            <input id="confirm-password" name="password_confirmation" type="password" autocomplete="new-password" required>
+            <button class="login">Change password</button>
+        </form>
+    </dialog>
+<?php endif; ?>
 <main>
     <section class="watch-card" aria-label="Watch Party">
         <img src="assets/play.svg" width="88" height="88" alt="">

@@ -64,7 +64,6 @@ try
         if ( !is_numeric( $position )         ||
              !is_finite( ( float )$position ) ||
              ( float )$position < 0           ||
-             ( float )$position > 604800      ||
              !in_array( $playing, [ "0", "1" ], true ) )
         {
             playback_response( 400, [ "error" => "Invalid playback state." ] );
