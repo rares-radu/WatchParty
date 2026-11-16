@@ -20,6 +20,12 @@ F---F---F---F---F---F---F---F---F---F---F---F---F---F---F---F---F-F*/
 function update_account_settings( int $userId ): string
 {
     $action = get_query_parameter( "action" );
+
+    if ( in_array( $action, [ "totp_start", "totp_enable", "totp_disable" ], true ) )
+    {
+        return update_totp_settings( $userId, $action );
+    }
+
     if ( $action === "username" )
     {
         $name = trim( get_query_parameter( "name" ) );

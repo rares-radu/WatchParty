@@ -1,5 +1,6 @@
 <?php
 require __DIR__ . "/app/bootstrap.php";
+require __DIR__ . "/app/totp.php";
 
 $user = current_user();
 
@@ -22,6 +23,9 @@ if ( $_SERVER[ "REQUEST_METHOD" ] === "POST" )
         redirect_home();
     }
 }
+
+$totpEnabled = $user && ( totp_record( ( int )$user[ "id" ] ) !== null );
+$setupKey    = $user && !$totpEnabled ? pending_totp_secret( ( int )$user[ "id" ] ) : null;
 ?>
 <!doctype html>
 <html lang="en-US">
@@ -88,6 +92,26 @@ if ( $_SERVER[ "REQUEST_METHOD" ] === "POST" )
             <label for="confirm-password">Confirm new password</label>
             <input id="confirm-password" name="password_confirmation" type="password" autocomplete="new-password" required>
             <button class="login">Change password</button>
+        </form>
+        <form method="post" class="auth-form" aria-labelledby="totp-title">
+            <h3 id="totp-title">Two-factor authentication</h3>
+            <input type="hidden" name="csrf" value="<?= $csrf ?>">
+            <?php if ( $totpEnabled || $setupKey ): ?>
+                <?php if ( $setupKey ): ?>
+                    <p class="muted">Add a time-based entry for Watch Party to your authenticator app using this setup key.</p>
+                    <input aria-label="Authenticator setup key" readonly value="<?= htmlspecialchars( $setupKey ) ?>">
+                <?php else: ?>
+                    <p class="muted">Enabled. To disable it, enter a fresh code from your authenticator app.</p>
+                <?php endif; ?>
+                <label for="settings-code">Authenticator code</label>
+                <input id="settings-code" name="totp_code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required>
+                <button class="login" name="action" value="<?= $totpEnabled ? "totp_disable" : "totp_enable" ?>"><?= $totpEnabled ? "Disable" : "Enable" ?> two-factor authentication</button>
+            <?php else: ?>
+                <p class="muted">Use an authenticator app to generate a six-digit code for each login.</p>
+                <label for="setup-password">Current password</label>
+                <input id="setup-password" type="password" name="current_password" autocomplete="current-password" required>
+                <button class="login" name="action" value="totp_start">Set up two-factor authentication</button>
+            <?php endif; ?>
         </form>
     </dialog>
 <?php endif; ?>

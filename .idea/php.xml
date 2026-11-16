@@ -96,6 +96,7 @@
       <path value="$PROJECT_DIR$/vendor/php-http/discovery" />
       <path value="$PROJECT_DIR$/vendor/symfony/polyfill-time" />
       <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php82" />
+      <path value="$PROJECT_DIR$/vendor/remotemerge/totp-php" />
     </include_path>
   </component>
   <component name="PhpStan">

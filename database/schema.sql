@@ -10,6 +10,14 @@ CREATE TABLE IF NOT EXISTS users
     created_at    TIMESTAMP                                                   NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE = InnoDB;
 
+CREATE TABLE IF NOT EXISTS user_totp
+(
+    user_id          BIGINT UNSIGNED PRIMARY KEY,
+    encrypted_secret VARBINARY( 1024 ) NOT NULL,
+    last_slice       BIGINT UNSIGNED   NOT NULL,
+    FOREIGN KEY ( user_id ) REFERENCES users ( id ) ON DELETE CASCADE
+) ENGINE = InnoDB;
+
 CREATE TABLE IF NOT EXISTS rooms
 (
     id          BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,

@@ -19,7 +19,8 @@ $dotenv->load();
 $dotenv->required(
                   [
                       "WATCHPARTY_HOST",              "WATCHPARTY_PORT",              "WATCHPARTY_DATABASE",
-                      "WATCHPARTY_DATABASE_USERNAME", "WATCHPARTY_DATABASE_PASSWORD", "TMDB_API_KEY"
+                      "WATCHPARTY_DATABASE_USERNAME", "WATCHPARTY_DATABASE_PASSWORD", "TMDB_API_KEY",
+                      "WATCHPARTY_TOTP_KEY"
                   ]
                  )->notEmpty();
 $dotenv->required( "WATCHPARTY_PORT" )->isInteger();

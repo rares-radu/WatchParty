@@ -1,6 +1,7 @@
 <?php
 global $mode;
 require __DIR__ . "/bootstrap.php";
+require __DIR__ . "/totp.php";
 
 if ( current_user() )
 {
@@ -63,13 +64,15 @@ if ( $_SERVER[ "REQUEST_METHOD" ] === "POST" )
     }
     else
     {
-        $query = db()->prepare( "SELECT id, password_hash FROM users WHERE email = ?" );
+        $query = db()->prepare( "SELECT id, password_hash, encrypted_secret, last_slice FROM users
+                                 LEFT JOIN user_totp ON user_totp.user_id = users.id WHERE email = ?" );
         $query->execute( [ $email ] );
         $user = $query->fetch( PDO::FETCH_ASSOC );
 
         // Cost-matched dummy hash avoids skipping expensive verification for unknown accounts
         $hash = $user[ "password_hash" ] ?? "$2y$12$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.";
-        if ( $user && password_verify( $password, $hash ) )
+        if ( $user && password_verify( $password, $hash ) &&
+             ( $user[ "encrypted_secret" ] === null || consume_totp_code( ( int )$user[ "id" ], $user, false ) ) )
         {
             if ( password_needs_rehash( $hash, PASSWORD_BCRYPT, [ "cost" => PASSWORD_BCRYPT_DEFAULT_COST ] ) )
             {
@@ -78,7 +81,7 @@ if ( $_SERVER[ "REQUEST_METHOD" ] === "POST" )
             }
             log_in( ( int )$user[ "id" ] );
         }
-        $error = "The email or password is incorrect.";
+        $error = "Check your email and password. If two-factor authentication is enabled, enter a fresh authenticator code.";
     }
 }
 ?>
@@ -117,6 +120,9 @@ if ( $_SERVER[ "REQUEST_METHOD" ] === "POST" )
                 <small id="password-help" class="muted">Use 12&ndash;72 characters.</small>
                 <label for="password_confirmation">Confirm password</label>
                 <input id="password_confirmation" type="password" name="password_confirmation" autocomplete="new-password" required>
+            <?php else: ?>
+                <label for="login-code">Authenticator code (if enabled)</label>
+                <input id="login-code" name="totp_code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6">
             <?php endif; ?>
             <button class="login primary" type="submit"><?= $title ?></button>
         </form>
